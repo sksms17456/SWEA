@@ -1,81 +1,73 @@
-//여러 개의 쇠막대기를 레이저로 절단하려고 한다.
+//성수는 이제 프로그래밍을 시작하기로 마음 먹은 초보다.
 //
-//효율적인 작업을 위해서 쇠막대기를 아래에서 위로 겹쳐 놓고, 레이저를 위에서 수직으로 발사하여 쇠막대기들을 자른다.
+//그렇기에 프로그래밍 강좌를 통해 자신의 프로그래밍 실력을 끌어 올리려고 한다.
 //
-//쇠막대기와 레이저의 배치는 다음 조건을 만족한다.
+//성수의 실력이 A라고 할 때, 수준이 M인 강좌를 시청하고 나면 성수의 실력은 (A+M)/2가 된다.
 //
-// - 쇠막대기는 자신보다 긴 쇠막대기 위에만 놓일 수 있다.
+//즉, 성수는 자신이 보는 강좌가 좋은 지 아닌지 판단하지 않고 그대로 강좌를 받아들이기 때문에,
 //
-// - 쇠막대기를 다른 쇠막대기 위에 놓는 경우 완전히 포함되도록 놓되, 끝점은 겹치지 않도록 놓는다.
+//실력보다 낮은 수준의 강좌를 보면 실력이 낮아질 수 있다.
 //
-// - 각 쇠막대기를 자르는 레이저는 적어도 하나 존재한다.
+//현재 성수는 아직 아무런 실력이 없다. 즉 실력이 0이다.
 //
-// - 레이저는 어떤 쇠막대기의 양 끝점과도 겹치지 않는다.
+//성수는 볼 수 있는 강좌 총 N개 찾았고 시간 문제상 이 중에서 K개를 적절한 순서로 선택해 한 번씩 시청하려고 한다.
 //
-//아래 그림은 위 조건을 만족하는 예를 보여준다.
-//
-//수평으로 그려진 굵은 실선은 쇠막대기이고, 점은 레이저의 위치, 수직으로 그려진 점선 화살표는 레이저의 발사 방향이다.
-//
-// 
-//
-//이러한 레이저와 쇠막대기의 배치는 다음과 같이 괄호를 이용하여 왼쪽부터 순서대로 표현할 수 있다.
-//
-//    1. 레이저는 여는 괄호와 닫는 괄호의 인접한 쌍 “()” 으로 표현된다. 또한, 모든 “()”는 반드시 레이저를 표현한다.
-//
-//    2. 쇠막대기의 왼쪽 끝은 여는 괄호 ‘(’ 로, 오른쪽 끝은 닫힌 괄호 ‘)’ 로 표현된다.
-//
-//위 예의 괄호 표현은 그림 위에 주어져 있다.
-//
-//쇠막대기는 레이저에 의해 몇 개의 조각으로 잘려지는데, 위 예에서 가장 위에 있는 두 개의 쇠막대기는 각각 3개와 2개의 조각으로 잘려지고,
-//
-//이와 같은 방식으로 주어진 쇠막대기들은 총 17개의 조각으로 잘려진다.
-//
-//쇠막대기와 레이저의 배치를 나타내는 괄호 표현이 주어졌을 때, 잘려진 쇠막대기 조각의 총 개수를 구하는 프로그램을 작성하라.
+//성수가 같은 강좌를 두 번 이상 보는 일은 없다고 할 때, 성수가 가질 수 있는 실력의 수치는 최대 몇인지 구하는 프로그램을 작성하라.
 //
 //
 //[입력]
 //
 //첫 번째 줄에 테스트 케이스의 수 T가 주어진다.
 //
-//각 테스트 케이스의 첫 번째 줄에는 쇠막대기와 레이저의 배치를 나타내는 괄호 표현이 공백없이 주어진다. 괄호 문자의 개수는 최대 100,000이다.
+//각 테스트 케이스의 첫 번째 줄에는 두 정수 N, K ( 1 ≤ K ≤ N ≤ 200 ) 이 주어진다.
+//
+//두 번째 줄에는 N개의 정수 M1, … MN ( 1 ≤ Mi ≤ 10000 ) 이 공백으로 구분되어 주어진다.
+//
+//각 정수는 강좌의 수준을 나타낸다.
+//
 //
 //[출력]
 //
-//각 테스트 케이스마다 #T를 출력하고 한 칸을 띄운 후, 잘려진 조각의 총 개수를 출력한다.
+//각 테스트 케이스마다 ‘#x’(x는 테스트케이스 번호를 의미하며 1부터 시작한다)를 출력하고 한 칸을 띄운 후,
+//
+//성수가 얻을 수 있는 실력 수치의 최댓값을 출력한다.
+//
+//정답과의 절대오차 혹은 상대 오차가 10-6이하이면 정답으로 인정된다.
+
+
 package SWEA.D4;
 
-import java.io.BufferedReader;
-import java.io.FileReader;
-import java.io.InputStreamReader;
-import java.util.Stack;
+import java.io.*;
+import java.util.Arrays;
 
 public class Solution_5432_쇠막대기자르기 {
+	static int T, N, K;
+	static double answer, max;
+	static double[] arr;
+	static String[] line;
 	public static void main(String[] args) throws Exception{
-//		BufferedReader input = new BufferedReader(new FileReader("text_D4/Solution_5432_쇠막대기자르기.txt"));
-		BufferedReader input = new BufferedReader(new InputStreamReader(System.in));
-		Stack<Character> stack = new Stack<>();
-		
-		int N =Integer.parseInt(input.readLine());
-		
-		for(int n=1; n<=N; n++) {
-			int sum=0;
-			String line = input.readLine();
-			int len = line.length();
-			for(int i=0; i<len; i++) {
-				char c = line.charAt(i);
-				if(c=='(')
-					stack.push('(');
-				else if(c==')'&&line.charAt(i-1)=='('){
-					stack.pop();
-					sum+=stack.size();
-				}else {
-					stack.pop();
-					sum+=1;
-				}
+		StringBuilder sb = new StringBuilder();
+		BufferedReader br = new BufferedReader(new FileReader("text_D4/Solution_6719_성수의프로그래밍강좌시청.txt"));
+//		BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
+		T = Integer.parseInt(br.readLine());
+		for(int t = 1; t<=T; t++) {
+			answer = 0;
+			line = br.readLine().split(" ");
+			N = Integer.parseInt(line[0]);
+			K = Integer.parseInt(line[1]);
+			arr = new double[N];
+			
+			line = br.readLine().split(" ");
+			for(int i=0; i<N; i++) {
+				arr[i] = Integer.parseInt(line[i]);
 			}
-		
-			System.out.println("#"+n+" "+sum);
+			Arrays.sort(arr);
+			
+			for(int i=N-K; i<N; i++) {
+				answer = (answer+arr[i])/2;
+			}
+			sb.append("#"+t+" "+String.format("%.6f", answer)+"\n");
 		}
+		System.out.println(sb);
 	}
-	
 }
