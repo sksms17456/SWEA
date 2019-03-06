@@ -124,8 +124,10 @@ import java.util.StringTokenizer;
 public class Solution_6907_단위변환기프로그램 {
 	static int T;
 	static String num, prefix, unit;
+	static boolean hasDot, isReal;
+	static char[] numarr;
 	public static void main(String[] args) throws Exception{
-		BufferedReader br = new BufferedReader(new FileReader("text_D4/Solution_7088_은기의송아지세기.txt"));
+		BufferedReader br = new BufferedReader(new FileReader("text_D4/Solution_6907_단위변환기프로그램.txt"));
 //		BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
 		T = Integer.parseInt(br.readLine());
 		StringTokenizer st;
@@ -151,11 +153,20 @@ public class Solution_6907_단위변환기프로그램 {
 		map.put("ato", -18);
 		map.put("zepto", -21);
 		map.put("yocto", -24);
-		for(int t=1; t<=T; t++) {
+		for(int t=1; t<=1; t++) {
+			hasDot=false;
+			isReal=false;
 			st = new StringTokenizer(br.readLine());
-			num = st.nextToken();
-			prefix = st.nextToken();
-			unit = st.nextToken();
+			if(st.countTokens()==3) {
+				num = st.nextToken();
+				prefix = st.nextToken();
+				unit = st.nextToken();
+				numarr = num.toCharArray();
+				
+			}else {
+				
+			}
+			
 		}
 	}
 }
