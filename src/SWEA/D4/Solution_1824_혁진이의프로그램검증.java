@@ -66,242 +66,99 @@ import java.util.LinkedList;
 import java.util.StringTokenizer;
 
 public class Solution_1824_혁진이의프로그램검증 {
-	static int T, R, C, d;
-	static char[][] program;
-	static int[][] pos = {{0,1},{1,0},{0,-1},{-1,0}};
-	static boolean[][][][] visit;
-	static boolean isYes;
 	public static void main(String[] args) throws Exception{
 		BufferedReader br = new BufferedReader(new FileReader("text_D4/Solution_1824_혁진이의프로그램검증.txt"));
 		//BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
-		T = Integer.parseInt(br.readLine());
 		StringTokenizer st;
-		StringBuilder sb = new StringBuilder();
-		for(int t=1; t<29; t++) {
-			d=0;
-			isYes = false;
-			st = new StringTokenizer(br.readLine());
+		int T = Integer.parseInt(br.readLine().trim());
+		int R, C;
+		char[][] code;
+		int[][] nd = {{-1, 0}, {1, 0}, {0, -1}, {0, 1}};
+		int r = 0, c = 0, d, m, nr, nc;
+		boolean[][][][] visit;
+		char cmd;
+		LinkedList<Integer> q = new LinkedList<>();
+		for(int t = 1; t <= T; t++) {
+			st = new StringTokenizer(br.readLine().trim());
 			R = Integer.parseInt(st.nextToken());
 			C = Integer.parseInt(st.nextToken());
-			program = new char[R][C];
-			visit = new boolean[R][C][16][4];
-			for(int i=0; i<R; i++) {
-				program[i] = br.readLine().toCharArray();
+			code = new char[R][C];
+			for(int i = 0; i < R; i++) {
+				code[i] = br.readLine().trim().toCharArray();
 			}
-			
-			check(0,0,0);
-			
-			if(isYes) {
-				sb.append("#").append(t).append(" YES\n");
-			}else {
-				sb.append("#").append(t).append(" NO\n");
-			}
-			if(t==28) {
-				for(int i=0; i<R; i++) {
-					System.out.println(Arrays.toString(program[i]));
+			d = 3;
+			visit = new boolean[R][C][4][16];
+			q.clear();
+			q.offer(0);
+			q.offer(0);
+			q.offer(3);
+			q.offer(0);
+			visit[0][0][3][0] = true;
+			while(!q.isEmpty()) {
+				r = q.poll();
+				c = q.poll();
+				d = q.poll();
+				m = q.poll();
+				if(code[r][c] == '@') {
+					break;
 				}
-			}
-		}
-		System.out.println(sb);
-	}
-	private static void check(int r, int c, int memory) {
-		if(program[r][c]=='@') {
-			isYes = true;
-			return;
-		}
-		int dr = r;
-		int dc = c;
-		while(true) {
-			System.out.println(dr+" "+dc);
-			if(visit[dr][dc][memory][d]) {
-				break;
-			}
-			switch (program[dr][dc]) {
-			case '_':
-				visit[dr][dc][memory][d]=true;
-				if(memory==0) {
-					d=0;					
-				}else {
-					d=2;
-				}
-				dr += pos[d][0];
-				dc += pos[d][1];
-				if(dc==C)
-					dc=0;
-				else if(dr==R)
-					dr=0;
-				else if(dc==-1)
-					dc=C-1;
-				else if(dr==-1)
-					dr=R-1;
-				break;
-			case '|':
-				visit[dr][dc][memory][d]=true;
-				if(memory==0) {
-					d=1;
-				}else {
-					d=3;
-				}
-				dr += pos[d][0];
-				dc += pos[d][1];
-				if(dc==C)
-					dc=0;
-				else if(dr==R)
-					dr=0;
-				else if(dc==-1)
-					dc=C-1;
-				else if(dr==-1)
-					dr=R-1;
-				break;
-			case '?':
-				LinkedList<int[]> queue = new LinkedList<>();
-				visit[dr][dc][memory][d]=true;
-				queue.offer(new int[] {dr,dc,memory,d});
-				while(!queue.isEmpty()) {
-					int[] temp = queue.poll();
-					for(int i=0; i<4; i++) {
-						int nr = temp[0]+pos[i][0];
-						int nc = temp[1]+pos[i][1];
-						if(nc==C) {
-							nc=0;
-							if(!visit[nr][nc][temp[2]][temp[3]]) {
-								visit[nr][nc][temp[2]][temp[3]]=true;
-								queue.offer(new int[] {nr,nc,temp[2],temp[3]});
-							}
-						}else if(nc==-1) {
-							nc=C-1;
-							if(!visit[nr][nc][temp[2]][temp[3]]) {
-								visit[nr][nc][temp[2]][temp[3]]=true;
-								queue.offer(new int[] {nr,nc,temp[2],temp[3]});
-							}
-						}else if(nr==R) {
-							nr=0;
-							if(!visit[nr][nc][temp[2]][temp[3]]) {
-								visit[nr][nc][temp[2]][temp[3]]=true;
-								queue.offer(new int[] {nr,nc,temp[2],temp[3]});
-							}
-						}else if(nr==-1) {
-							nr=R-1;
-							if(!visit[nr][nc][temp[2]][temp[3]]) {
-								visit[nr][nc][temp[2]][temp[3]]=true;
-								queue.offer(new int[] {nr,nc,temp[2],temp[3]});
-							}
-						}else {
-							if(!visit[nr][nc][temp[2]][temp[3]]) {
-								visit[nr][nc][temp[2]][temp[3]]=true;
-								queue.offer(new int[] {nr,nc,temp[2],temp[3]});
-							}
+				cmd = code[r][c];
+				if(cmd == '?') {
+					for(int i = 0; i < 4; i++) {
+						nr = (r + R + nd[i][0]) % R;
+						nc = (c + C + nd[i][1]) % C;
+						if(!visit[nr][nc][i][m]) {
+							q.offer(nr);
+							q.offer(nc);
+							q.offer(i);
+							q.offer(m);
+							visit[nr][nc][i][m] = true;
 						}
 					}
+				} else {
+					if (Character.isDigit(cmd)) {
+						m = cmd - '0';
+					} else if (cmd == '<') {
+						d = 2;
+					} else if (cmd == '>') {
+						d = 3;
+					} else if (cmd == '^') {
+						d = 0;
+					} else if (cmd == 'v') {
+						d = 1;
+					} else if (cmd == '_') {
+						if (m == 0) {
+							d = 3;
+						} else {
+							d = 2;
+						}
+					} else if (cmd == '|') {
+						if (m == 0) {
+							d = 1;
+						} else {
+							d = 0;
+						}
+					} else if (cmd == '+') {
+						m = (m + 1) % 16;
+					} else if (cmd == '-') {
+						m = (m + 15) % 16;
+					}
+					r = (r + R + nd[d][0]) % R;
+					c = (c + C + nd[d][1]) % C;
+					if(!visit[r][c][d][m]) {
+						q.offer(r);
+						q.offer(c);
+						q.offer(d);
+						q.offer(m);
+						visit[r][c][d][m] = true;
+					}
 				}
-				break;
-			case '.':
-				visit[dr][dc][memory][d]=true;
-
-				dr += pos[d][0];
-				dc += pos[d][1];
-
-				if(dc==C) {
-					dc=0;
-				}
-				else if(dr==R) {
-					dr=0;
-				}
-				else if(dc==-1) {
-					dc=C-1;
-				}
-				else if(dr==-1) {
-					dr=R-1;
-				}
-				break;
-			case '@':
-				visit[dr][dc][memory][d]=true;
-				isYes = true;
-				return;
-			case '+':
-				visit[dr][dc][memory][d]=true;
-				if(memory==15) {
-					memory=0;
-				}else {
-					memory++;
-				}
-				dr += pos[d][0];
-				dc += pos[d][1];
-				if(dc==C)
-					dc=0;
-				else if(dr==R)
-					dr=0;
-				else if(dc==-1)
-					dc=C-1;
-				else if(dr==-1)
-					dr=R-1;
-				break;
-			case '-':
-				visit[dr][dc][memory][d]=true;
-				if(memory==0) {
-					memory=15;
-				}else {
-					memory--;
-				}
-				dr += pos[d][0];
-				dc += pos[d][1];
-				if(dc==C)
-					dc=0;
-				else if(dr==R)
-					dr=0;
-				else if(dc==-1)
-					dc=C-1;
-				else if(dr==-1)
-					dr=R-1;
-				break;
-			case '>':
-				visit[dr][dc][memory][d]=true;
-				d=0;
-				dr += pos[d][0];
-				dc += pos[d][1];
-				if(dc==C)
-					dc=0;
-				break;
-			case 'v':
-				visit[dr][dc][memory][d]=true;
-				d=1;
-				dr += pos[d][0];
-				dc += pos[d][1];
-				if(dr==R)
-					dr=0;
-				break;
-			case '<':
-				visit[dr][dc][memory][d]=true;
-				d=2;
-				dr += pos[d][0];
-				dc += pos[d][1];
-				if(dc==-1)
-					dc=C-1;
-				break;
-			case '^':
-				visit[dr][dc][memory][d]=true;
-				d=3;
-				dr += pos[d][0];
-				dc += pos[d][1];
-				if(dr==-1)
-					dr=R-1;
-				break;
-			default:
-				visit[dr][dc][memory][d]=true;
-				memory=program[dr][dc]-'0';
-				dr += pos[d][0];
-				dc += pos[d][1];
-				if(dc==C)
-					dc=0;
-				else if(dr==R)
-					dr=0;
-				else if(dc==-1)
-					dc=C-1;
-				else if(dr==-1)
-					dr=R-1;
-				break;
 			}
-			
+			if(code[r][c] == '@') {
+				System.out.println("#" + t + " YES");
+			} else {
+				System.out.println("#" + t + " NO");
+			}
 		}
 	}
 }
