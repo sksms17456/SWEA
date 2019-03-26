@@ -40,6 +40,7 @@
 package SWEA.D4;
 
 import java.io.*;
+import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.StringTokenizer;
 
@@ -53,6 +54,7 @@ public class Solution_1949_등산로 {
 		StringTokenizer st;
 		StringBuilder sb = new StringBuilder();
 		for(int tc=1; tc<=T	; tc++) {
+			ArrayList<int[]> list = new ArrayList<>();
 			maxheight = Integer.MIN_VALUE;
 			dist = 0;
 			st = new StringTokenizer(br.readLine());
@@ -66,26 +68,28 @@ public class Solution_1949_등산로 {
 					maxheight=Math.max(maxheight, road[i][j]);
 				}
 			}
-			for(int a=0; a<N; a++) {
-				for(int b=0; b<N; b++) {
-					road[a][b]-=K;
-					for(int i=0; i<N; i++) {
-						for(int j=0; j<N; j++) {
-							if(road[i][j]==maxheight) {
-								findRoad(i,j);
-							}
-						}
+			for(int i=0; i<N; i++) {
+				for(int j=0; j<N; j++) {
+					if(road[i][j]==maxheight) {
+						list.add(new int[] {i,j});
 					}
-					road[a][b]+=K;
 				}
 			}
-//			for(int i=0; i<N; i++) {
-//				for(int j=0; j<N; j++) {
-//					if(road[i][j]==maxheight) {
-//						findRoad(i,j);
-//					}
-//				}
-//			}
+			for(int a=0; a<N; a++) {
+				for(int b=0; b<N; b++) {
+					for(int c=1; c<=K; c++) {
+						if(road[a][b]-c<0) {
+							break;
+						}
+						road[a][b]-=c;
+						for(int i=0; i<list.size(); i++) {
+							findRoad(list.get(i)[0],list.get(i)[1]);
+						}
+						road[a][b]+=c;
+					}
+					
+				}
+			}
 			sb.append("#").append(tc).append(" ").append(dist).append("\n");
 		}
 		System.out.println(sb);
@@ -100,17 +104,6 @@ public class Solution_1949_등산로 {
 				int nr = temp[0]+pos[i][0];
 				int nc = temp[1]+pos[i][1];
 				if(isOk(nr,nc)) {
-//					if(temp[4]==1 && road[nr][nc]<temp[2]) {
-//						q.offer(new int[] {nr,nc,road[nr][nc],temp[3]+1,1});
-//					}
-//					else {
-//						if(road[nr][nc]<temp[2]) {
-//							q.offer(new int[] {nr,nc,road[nr][nc],temp[3]+1,0});
-//						}
-//						if(road[nr][nc]-K<temp[2]) {
-//							q.offer(new int[] {nr,nc,road[nr][nc]-K,temp[3]+1,1});
-//						}
-//					}
 					if(road[nr][nc]<temp[2]) {
 						q.offer(new int[] {nr,nc,road[nr][nc],temp[3]+1,0});
 					}
