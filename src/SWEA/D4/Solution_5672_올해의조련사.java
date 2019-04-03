@@ -37,41 +37,44 @@ package SWEA.D4;
 
 import java.io.*;
 import java.util.ArrayList;
+import java.util.Arrays;
 
 public class Solution_5672_올해의조련사 {
-	static int T, N;
-	static String newline;
-	static ArrayList<Character> line;
+	static int T, N, h, t, idx;
+	static char[] old, cre;
 	public static void main(String[] args) throws Exception{
 		BufferedReader br = new BufferedReader(new FileReader("text_D4/Solution_5672_올해의조련사.txt"));
 //      BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
 		T = Integer.parseInt(br.readLine().trim());
 		StringBuilder sb = new StringBuilder();
 		for(int tc=1; tc<=T; tc++) {
-			line = new ArrayList<>();
 			N = Integer.parseInt(br.readLine().trim());
-			newline = "";
+			old = new char[N];
+			cre = new char[N];
 			for(int i=0; i<N; i++) {
-				line.add(br.readLine().trim().charAt(0));
+				old[i] = br.readLine().charAt(0);
 			}
-			System.out.println(line.toString());
-			while(true) {
-				if(line.size()==1) {
-					break;
+			h = 0;
+			t = N-1;
+			idx=0;
+			while(h<t) {
+				int th = h;
+				int tt = t;
+				while(th<tt && old[th]==old[tt]) {
+					th++;
+					tt--;
 				}
-				int len = line.size();
-				if(line.get(0)>line.get(len-1)) {
-					newline+=line.get(0);
-					line.remove(0);
-				}else if(line.get(0)<line.get(len-1)) {
-					newline+=line.get(len-1);
-					line.remove(len-1);
+				if(old[th]>old[tt]) {
+					cre[idx++]=old[t];
+					t--;
 				}else {
-					
+					cre[idx++]=old[h];
+					h++;
 				}
 			}
-			newline += line.get(0);
-			
+			cre[idx]=old[h];
+			sb.append("#").append(tc).append(" ").append(String.valueOf(cre)).append("\n");
 		}
+		System.out.println(sb);
 	}
 }
