@@ -66,7 +66,7 @@ import java.util.Scanner;
 import java.util.StringTokenizer;
 
 public class Solution_4796_우뚝선산 {
-	static int T, N, ans;
+	static int T, N, ans, start, end;
 	static int[] mountain;
 	public static void main(String[] args) throws  Exception{
 		StringTokenizer st;
@@ -80,37 +80,27 @@ public class Solution_4796_우뚝선산 {
 			for(int i=0; i<N; i++) {
 				mountain[i] = sc.nextInt();
 			}
-			int udduk = 0;
-			int start = 0;
-			int end = 0;
-			boolean isBreak = false;
-			while(true) {
-				for(int i=1; start+i<mountain.length; i++) {
-					if(mountain[start+i-1]<mountain[start+i]) {
-						continue;
-					}else if(mountain[start+i-1]>mountain[start+i]) {
-						udduk = start+i-1;
-						break;
-					}
+			start = 0;
+			end = 0;
+			
+			for(int i=1; i<N; i++) {
+				if(end>0 && start==0 && mountain[i-1]<mountain[i]) {
+					end = 0;
 				}
-				for(int i=1; udduk+i<mountain.length; i++) {
-					if(udduk+i==mountain.length-1) {
-						isBreak = true;
-					}
-					if(mountain[udduk+i-1]>mountain[udduk+i]) {
-						continue;
-					}else if(mountain[udduk+i-1]<mountain[udduk+i]) {
-						end = udduk+i-1;
-						break;
-					}
+				if(start>0 && end>0 && mountain[i-1]<mountain[i]) {
+					ans+=start*end;
+					start=0;
+					end=0;
 				}
-				ans += Math.abs((end-udduk)*(udduk-start));
-				start = end;
-				if(isBreak) {
-					break;
-				}
-				
+				if(mountain[i-1]<mountain[i]) {
+					start++;
+				}else if(mountain[i-1]>mountain[i]) {
+					end++;
+				}				
 			}	
+			if(start>0 && end>0) {
+				ans+=start*end;
+			}
 			sb.append("#").append(tc).append(" ").append(ans).append("\n");
 		}
 		System.out.println(sb);
