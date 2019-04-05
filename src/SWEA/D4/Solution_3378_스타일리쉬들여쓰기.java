@@ -1,4 +1,4 @@
-//스타일리쉬는 프로그래밍 언어의 일종으로 이 언어의 문법은 알파벳, 세 종류의 괄호 문자, 온점(‘.’) 그리고 개행으로 이루어져 있다.
+//스타일리쉬는 프그래밍 언어의 일종으로 이 언어의 문법은 알파벳, 세 종류의 괄호 문자, 온점(‘.’) 그리고 개행으로 이루어져 있다.
 //
 //괄호는 소괄호 ( ‘(‘와 ‘)’ ), 중괄호 ( ‘{‘와 ‘}’ ) 그리고 대괄호 ( ‘[’와 ‘]’ )로 이루어져 있고 서로 짝이 잘 맞도록 써야 한다. (일반적인 언어에서의 괄호를 사용하는 법과 같다.)
 //
@@ -78,19 +78,159 @@ import java.io.*;
 import java.util.StringTokenizer;
 
 public class Solution_3378_스타일리쉬들여쓰기 {
-	static int T, p, q, or,cr,oc,cc,os,cs,R,C,S;
+	static int T, p, q;
+	static int[][] master, mine;
+	static boolean[][][] table;
+	static boolean isSpaceEnd;
 	static String line;
-	static boolean[] v;
 	public static void main(String[] args) throws Exception{
 		BufferedReader br = new BufferedReader(new FileReader("text_D4/Solution_3378_스타일리쉬들여쓰기.txt"));
 //      BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
 		StringBuilder sb = new StringBuilder();
 		StringTokenizer st;
 		T = Integer.parseInt(br.readLine());
-		for(int tc=1; tc<=1; tc++) {
-			
-			
-		}
-	}
-	
+		for(int tc=1; tc<=T; tc++) {
+			st = new StringTokenizer(br.readLine());
+			p = Integer.parseInt(st.nextToken());
+            q = Integer.parseInt(st.nextToken());
+            master = new int[p][4];
+            for(int i=0;i<p;i++){
+                tableInit();                 
+                line = br.readLine().trim();
+                isSpaceEnd = false;
+                for(int j=0;j<line.length();j++){
+                    switch(line.charAt(j)){
+                    case '(' :
+                    	master[i][0] ++;
+                        isSpaceEnd=true;
+                        break;
+                    case ')':
+                    	master[i][0]--;
+                        isSpaceEnd=true;
+                        break;
+                    case '{':
+                    	master[i][1]++;
+                        isSpaceEnd=true;
+                        break;
+                    case '}':
+                    	master[i][1]--;
+                        isSpaceEnd=true;
+                        break;
+                    case '[':
+                    	master[i][2]++;
+                        isSpaceEnd=true;
+                        break;
+                    case ']':
+                    	master[i][2]--;
+                        isSpaceEnd=true;
+                        break;
+                    case '.':
+                        if(!isSpaceEnd){
+                        	master[i-1][3]++;
+                        }
+                        break;
+                    default:
+                        isSpaceEnd=true;
+                        break;
+                    }
+                }
+                if(i+1<p){
+                	master[i+1][0] = master[i][0];
+                	master[i+1][1] = master[i][1];
+                	master[i+1][2] = master[i][2];
+                }
+            }
+            for(int i=0;i<p-1;i++){
+                setTable(master[i][0], master[i][1], master[i][2], master[i][3]);
+            }
+            
+            mine = new int[q][3];
+            for(int i=0;i<q;i++){
+            	line = br.readLine().trim();
+                for(int j=0;j<line.length();j++){
+                    switch(line.charAt(j)){
+                    case '(' :
+                    	mine[i][0] ++;
+                        break;
+                    case ')':
+                    	mine[i][0]--;
+                        break;
+                    case '{':
+                    	mine[i][1]++;
+                        break;
+                    case '}':
+                    	mine[i][1]--;
+                        break;
+                    case '[':
+                    	mine[i][2]++;
+                        break;
+                    case ']':
+                    	mine[i][2]--;
+                        break;
+                    default:
+                        break;
+                    }
+                }
+                if(i+1<q){
+                	mine[i+1][0] = mine[i][0];
+                	mine[i+1][1] = mine[i][1];
+                	mine[i+1][2] = mine[i][2];
+                }
+            }
+            sb.append('#').append(tc).append(' ').append(0).append(' ');
+            for(int i=0;i<q-1;i++){
+                sb.append(getValue(mine[i][0], mine[i][1], mine[i][2])).append(' ');
+            }
+            sb.append('\n');
+        }
+        System.out.println(sb);
+    }
+     
+    static void tableInit(){
+        table = new boolean[21][21][21];
+        for(int s=1;s<=20;s++){
+            for(int m=1;m<=20;m++){
+                for(int l=1;l<=20;l++){
+                    table[s][m][l]=true;
+                }
+            }
+        }
+    }
+     
+    static void setTable(int small,int medium,int large,int value){
+        for(int s=1;s<=20;s++){
+            for(int m=1;m<=20;m++){
+                for(int l=1;l<=20;l++){
+                    if(!table[s][m][l]){
+                        continue;
+                    }
+                    if(s*small+m*medium+l*large!=value){
+                        table[s][m][l]=false;
+                    }
+                }
+            }
+        }
+    }
+     
+    static int getValue(int small,int medium,int large){
+        int getVal = -1;
+        for(int s=1;s<=20;s++){
+            for(int m=1;m<=20;m++){
+                for(int l=1;l<=20;l++){
+                    if(!table[s][m][l]){
+                        continue;
+                    }
+                    int tempval = s*small+m*medium+l*large;
+                    if(getVal==-1){
+                        getVal=tempval;
+                    }
+                    else if(getVal!=tempval){
+                        return -1;
+                    }
+                }
+            }
+        }
+        return getVal;
+    }
+ 
 }
